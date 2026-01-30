@@ -245,7 +245,11 @@ export function TagCard({ index, form, onRemove, canRemove }: TagCardProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Shape *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select 
+                    key={`${material}-shape`}
+                    onValueChange={field.onChange} 
+                    value={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a shape" />
