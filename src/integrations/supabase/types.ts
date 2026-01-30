@@ -14,7 +14,158 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pet_tag_items: {
+        Row: {
+          animal_type: Database["public"]["Enums"]["animal_type"]
+          animal_type_other: string | null
+          back_line_1: string
+          back_line_2: string | null
+          back_line_3: string | null
+          created_at: string
+          front_line_1: string
+          front_line_2: string | null
+          id: string
+          material: Database["public"]["Enums"]["tag_material"]
+          mockup_url: string | null
+          order_id: string
+          pet_name: string
+          pet_name_case: Database["public"]["Enums"]["pet_name_case"]
+          shape: string
+          size: Database["public"]["Enums"]["tag_size"]
+          tag_number: number
+        }
+        Insert: {
+          animal_type?: Database["public"]["Enums"]["animal_type"]
+          animal_type_other?: string | null
+          back_line_1: string
+          back_line_2?: string | null
+          back_line_3?: string | null
+          created_at?: string
+          front_line_1: string
+          front_line_2?: string | null
+          id?: string
+          material?: Database["public"]["Enums"]["tag_material"]
+          mockup_url?: string | null
+          order_id: string
+          pet_name: string
+          pet_name_case?: Database["public"]["Enums"]["pet_name_case"]
+          shape: string
+          size?: Database["public"]["Enums"]["tag_size"]
+          tag_number: number
+        }
+        Update: {
+          animal_type?: Database["public"]["Enums"]["animal_type"]
+          animal_type_other?: string | null
+          back_line_1?: string
+          back_line_2?: string | null
+          back_line_3?: string | null
+          created_at?: string
+          front_line_1?: string
+          front_line_2?: string | null
+          id?: string
+          material?: Database["public"]["Enums"]["tag_material"]
+          mockup_url?: string | null
+          order_id?: string
+          pet_name?: string
+          pet_name_case?: Database["public"]["Enums"]["pet_name_case"]
+          shape?: string
+          size?: Database["public"]["Enums"]["tag_size"]
+          tag_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pet_tag_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "pet_tag_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pet_tag_orders: {
+        Row: {
+          add_image: boolean
+          add_ons_total: number
+          base_tag_price: number
+          created_at: string
+          customer_name: string
+          date_ordered: string
+          email: string | null
+          font_choice: string
+          icon_placement: Database["public"]["Enums"]["icon_placement"]
+          icons: Json
+          id: string
+          notes: string | null
+          order_number: string
+          order_total: number
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_method_other: string | null
+          phone_number: string
+          preferred_contact: Database["public"]["Enums"]["contact_preference"]
+          ready_by: string | null
+          signature: string
+          signature_date: string
+          spelling_confirmed: boolean
+          staff_initials: string | null
+          status: Database["public"]["Enums"]["order_status"]
+          updated_at: string
+        }
+        Insert: {
+          add_image?: boolean
+          add_ons_total?: number
+          base_tag_price?: number
+          created_at?: string
+          customer_name: string
+          date_ordered?: string
+          email?: string | null
+          font_choice: string
+          icon_placement?: Database["public"]["Enums"]["icon_placement"]
+          icons?: Json
+          id?: string
+          notes?: string | null
+          order_number: string
+          order_total?: number
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          payment_method_other?: string | null
+          phone_number: string
+          preferred_contact?: Database["public"]["Enums"]["contact_preference"]
+          ready_by?: string | null
+          signature: string
+          signature_date?: string
+          spelling_confirmed?: boolean
+          staff_initials?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          updated_at?: string
+        }
+        Update: {
+          add_image?: boolean
+          add_ons_total?: number
+          base_tag_price?: number
+          created_at?: string
+          customer_name?: string
+          date_ordered?: string
+          email?: string | null
+          font_choice?: string
+          icon_placement?: Database["public"]["Enums"]["icon_placement"]
+          icons?: Json
+          id?: string
+          notes?: string | null
+          order_number?: string
+          order_total?: number
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          payment_method_other?: string | null
+          phone_number?: string
+          preferred_contact?: Database["public"]["Enums"]["contact_preference"]
+          ready_by?: string | null
+          signature?: string
+          signature_date?: string
+          spelling_confirmed?: boolean
+          staff_initials?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +174,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      animal_type: "dog" | "cat" | "other"
+      contact_preference: "call" | "text" | "email"
+      icon_placement: "before" | "after" | "above" | "back"
+      order_status: "pending" | "in_progress" | "completed" | "cancelled"
+      payment_method: "cash" | "card" | "other"
+      pet_name_case: "uppercase" | "mixed"
+      tag_material: "brass" | "stainless"
+      tag_size: "small" | "large"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +308,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      animal_type: ["dog", "cat", "other"],
+      contact_preference: ["call", "text", "email"],
+      icon_placement: ["before", "after", "above", "back"],
+      order_status: ["pending", "in_progress", "completed", "cancelled"],
+      payment_method: ["cash", "card", "other"],
+      pet_name_case: ["uppercase", "mixed"],
+      tag_material: ["brass", "stainless"],
+      tag_size: ["small", "large"],
+    },
   },
 } as const
