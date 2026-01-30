@@ -21,34 +21,38 @@ import {
 } from '@/components/ui/form';
 import { useEffect } from 'react';
 
-// Material/Shape/Size constraints
-const MATERIAL_OPTIONS = [
-  { value: 'brass', label: 'Brass', color: 'bg-brass' },
-  { value: 'stainless', label: 'Silver', color: 'bg-steel' },
-  { value: 'pink_silver', label: 'Pink Silver', color: 'bg-pink-300' },
-] as const;
+// Shape options (user picks first)
+const SHAPE_OPTIONS = ['Round', 'Bone', 'Heart'] as const;
 
-const getAvailableShapes = (material: string) => {
-  switch (material) {
-    case 'brass':
-      return ['Round'];
-    case 'stainless':
-      return ['Round', 'Bone'];
-    case 'pink_silver':
-      return ['Heart'];
+// Material options based on shape
+const getAvailableMaterials = (shape: string) => {
+  switch (shape) {
+    case 'Round':
+      return [
+        { value: 'brass', label: 'Brass', color: 'bg-brass' },
+        { value: 'stainless', label: 'Silver', color: 'bg-steel' },
+      ];
+    case 'Bone':
+      return [
+        { value: 'stainless', label: 'Silver', color: 'bg-steel' },
+      ];
+    case 'Heart':
+      return [
+        { value: 'pink_silver', label: 'Pink Silver', color: 'bg-pink-300' },
+      ];
     default:
-      return ['Round'];
+      return [
+        { value: 'brass', label: 'Brass', color: 'bg-brass' },
+      ];
   }
 };
 
-const getAvailableSizes = (material: string, shape: string) => {
-  if (material === 'pink_silver' && shape === 'Heart') {
-    return ['large']; // Pink silver heart only comes in large
+// Size options based on shape
+const getAvailableSizes = (shape: string) => {
+  if (shape === 'Heart') {
+    return ['large']; // Heart only comes in large
   }
-  if (material === 'stainless' && shape === 'Bone') {
-    return ['small', 'large']; // Bone available in both sizes
-  }
-  return ['small', 'large']; // Round available in both sizes for brass/silver
+  return ['small', 'large'];
 };
 
 interface TagCardProps {
@@ -60,26 +64,27 @@ interface TagCardProps {
 
 export function TagCard({ index, form, onRemove, canRemove }: TagCardProps) {
   const animalType = form.watch(`tags.${index}.animalType`);
-  const material = form.watch(`tags.${index}.material`) || 'brass';
   const shape = form.watch(`tags.${index}.shape`) || 'Round';
+  const material = form.watch(`tags.${index}.material`);
 
-  const availableShapes = getAvailableShapes(material);
-  const availableSizes = getAvailableSizes(material, shape);
+  const availableMaterials = getAvailableMaterials(shape);
+  const availableSizes = getAvailableSizes(shape);
 
-  // Auto-adjust shape when material changes
+  // Auto-adjust material when shape changes (if current material not available)
   useEffect(() => {
-    if (shape && !availableShapes.includes(shape)) {
-      form.setValue(`tags.${index}.shape`, availableShapes[0]);
+    const materialValues = availableMaterials.map(m => m.value);
+    if (material && !materialValues.includes(material)) {
+      form.setValue(`tags.${index}.material`, availableMaterials[0].value as 'brass' | 'stainless' | 'pink_silver');
     }
-  }, [material, availableShapes, shape, form, index]);
+  }, [shape, availableMaterials, material, form, index]);
 
-  // Auto-adjust size when shape/material changes
+  // Auto-adjust size when shape changes (if current size not available)
   useEffect(() => {
     const currentSize = form.getValues(`tags.${index}.size`);
     if (currentSize && !availableSizes.includes(currentSize)) {
       form.setValue(`tags.${index}.size`, availableSizes[0] as 'small' | 'large');
     }
-  }, [material, shape, availableSizes, form, index]);
+  }, [shape, availableSizes, form, index]);
   return (
     <div className="tag-card animate-slide-in">
       <div className="flex items-center justify-between mb-4">
@@ -209,7 +214,36 @@ export function TagCard({ index, form, onRemove, canRemove }: TagCardProps) {
           </h4>
 
           <div className="grid gap-4">
-            {/* Material first - determines available shapes */}
+            {/* Shape first - determines available materials and sizes */}
+            <FormField
+              control={form.control}
+              name={`tags.${index}.shape`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Shape *</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="flex flex-wrap gap-2"
+                    >
+                      {SHAPE_OPTIONS.map((shapeOption) => (
+                        <Label 
+                          key={shapeOption}
+                          className={`option-item flex-1 justify-center min-w-[80px] ${field.value === shapeOption ? 'selected' : ''}`}
+                        >
+                          <RadioGroupItem value={shapeOption} className="sr-only" />
+                          {shapeOption}
+                        </Label>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Material - options depend on shape */}
             <FormField
               control={form.control}
               name={`tags.${index}.material`}
@@ -218,11 +252,12 @@ export function TagCard({ index, form, onRemove, canRemove }: TagCardProps) {
                   <FormLabel>Material *</FormLabel>
                   <FormControl>
                     <RadioGroup
+                      key={`${shape}-material`}
                       onValueChange={field.onChange}
                       value={field.value}
                       className="flex flex-wrap gap-2"
                     >
-                      {MATERIAL_OPTIONS.map((mat) => (
+                      {availableMaterials.map((mat) => (
                         <Label 
                           key={mat.value}
                           className={`option-item flex-1 justify-center min-w-[100px] ${field.value === mat.value ? 'selected' : ''}`}
@@ -239,35 +274,7 @@ export function TagCard({ index, form, onRemove, canRemove }: TagCardProps) {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name={`tags.${index}.shape`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Shape *</FormLabel>
-                  <Select 
-                    key={`${material}-shape`}
-                    onValueChange={field.onChange} 
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a shape" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {availableShapes.map((shapeOption) => (
-                        <SelectItem key={shapeOption} value={shapeOption}>
-                          {shapeOption}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+            {/* Size - options depend on shape */}
             <FormField
               control={form.control}
               name={`tags.${index}.size`}
@@ -276,6 +283,7 @@ export function TagCard({ index, form, onRemove, canRemove }: TagCardProps) {
                   <FormLabel>Size *</FormLabel>
                   <FormControl>
                     <RadioGroup
+                      key={`${shape}-size`}
                       onValueChange={field.onChange}
                       value={field.value}
                       className="flex gap-2"
