@@ -2,95 +2,120 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Pacifico&display=swap');
+
+/* Mana's Craft Pet Tag Order Form - Design System
+   Warm, artisan-inspired theme with earthy metallics */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Warm cream background */
+    --background: 40 33% 97%;
+    --foreground: 25 30% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Cards with subtle warmth */
+    --card: 40 40% 99%;
+    --card-foreground: 25 30% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 40 40% 99%;
+    --popover-foreground: 25 30% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Copper/Amber primary - evokes brass tags */
+    --primary: 25 80% 45%;
+    --primary-foreground: 40 40% 99%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Soft sage secondary */
+    --secondary: 140 20% 92%;
+    --secondary-foreground: 140 25% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted warm grays */
+    --muted: 35 15% 92%;
+    --muted-foreground: 25 15% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Warm amber accent */
+    --accent: 35 90% 55%;
+    --accent-foreground: 25 30% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Warm red for errors */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 40 40% 99%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Subtle warm borders */
+    --border: 35 25% 85%;
+    --input: 35 25% 85%;
+    --ring: 25 80% 45%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Section colors for visual separation */
+    --section-customer: 200 60% 94%;
+    --section-tag: 25 50% 94%;
+    --section-text: 140 30% 94%;
+    --section-font: 280 40% 94%;
+    --section-price: 45 60% 94%;
+    --section-confirm: 0 50% 95%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Metallic accents */
+    --brass: 43 70% 55%;
+    --steel: 210 10% 65%;
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 40 33% 97%;
+    --sidebar-foreground: 25 30% 15%;
+    --sidebar-primary: 25 80% 45%;
+    --sidebar-primary-foreground: 40 40% 99%;
+    --sidebar-accent: 35 90% 55%;
+    --sidebar-accent-foreground: 25 30% 15%;
+    --sidebar-border: 35 25% 85%;
+    --sidebar-ring: 25 80% 45%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 25 20% 10%;
+    --foreground: 40 20% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 25 18% 14%;
+    --card-foreground: 40 20% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 25 18% 14%;
+    --popover-foreground: 40 20% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 30 75% 50%;
+    --primary-foreground: 25 20% 10%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 140 15% 20%;
+    --secondary-foreground: 140 20% 85%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 25 15% 20%;
+    --muted-foreground: 35 15% 60%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 35 80% 50%;
+    --accent-foreground: 25 20% 10%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 40 20% 95%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 25 15% 25%;
+    --input: 25 15% 25%;
+    --ring: 30 75% 50%;
+
+    --section-customer: 200 30% 18%;
+    --section-tag: 25 25% 18%;
+    --section-text: 140 15% 18%;
+    --section-font: 280 20% 18%;
+    --section-price: 45 30% 18%;
+    --section-confirm: 0 25% 18%;
+
+    --brass: 43 60% 45%;
+    --steel: 210 8% 55%;
+
+    --sidebar-background: 25 20% 10%;
+    --sidebar-foreground: 40 20% 95%;
+    --sidebar-primary: 30 75% 50%;
+    --sidebar-primary-foreground: 25 20% 10%;
+    --sidebar-accent: 35 80% 50%;
+    --sidebar-accent-foreground: 25 20% 10%;
+    --sidebar-border: 25 15% 25%;
+    --sidebar-ring: 30 75% 50%;
   }
 }
 
@@ -100,6 +125,118 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  /* Form section cards with colored accents */
+  .form-section {
+    @apply rounded-xl border bg-card p-4 md:p-6 shadow-sm;
+  }
+
+  .form-section-customer {
+    @apply border-l-4;
+    border-left-color: hsl(200 60% 50%);
+  }
+
+  .form-section-tag {
+    @apply border-l-4;
+    border-left-color: hsl(var(--primary));
+  }
+
+  .form-section-text {
+    @apply border-l-4;
+    border-left-color: hsl(140 50% 45%);
+  }
+
+  .form-section-font {
+    @apply border-l-4;
+    border-left-color: hsl(280 50% 55%);
+  }
+
+  .form-section-price {
+    @apply border-l-4;
+    border-left-color: hsl(var(--accent));
+  }
+
+  .form-section-confirm {
+    @apply border-l-4;
+    border-left-color: hsl(0 60% 50%);
+  }
+
+  /* Section headers */
+  .section-header {
+    @apply flex items-center gap-3 mb-4 pb-3 border-b border-border;
+  }
+
+  .section-number {
+    @apply w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold;
+  }
+
+  .section-title {
+    @apply text-lg font-bold text-foreground;
+  }
+
+  /* Tag card styling */
+  .tag-card {
+    @apply p-4 rounded-lg bg-muted/50 border border-border;
+  }
+
+  /* Radio/checkbox group styling */
+  .option-group {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .option-item {
+    @apply flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-background cursor-pointer transition-all;
+  }
+
+  .option-item:hover {
+    @apply border-primary/50 bg-primary/5;
+  }
+
+  .option-item[data-state="checked"],
+  .option-item.selected {
+    @apply border-primary bg-primary/10;
+  }
+
+  /* Price display */
+  .price-display {
+    @apply text-2xl font-bold text-primary;
+  }
+
+  /* Signature field */
+  .signature-field {
+    font-family: 'Pacifico', cursive;
+    @apply text-xl;
+  }
+
+  /* Paw print decorations */
+  .paw-decoration {
+    @apply opacity-10;
+  }
+}
+
+@layer utilities {
+  .text-brass {
+    color: hsl(var(--brass));
+  }
+
+  .bg-brass {
+    background-color: hsl(var(--brass));
+  }
+
+  .text-steel {
+    color: hsl(var(--steel));
+  }
+
+  .bg-steel {
+    background-color: hsl(var(--steel));
   }
 }
