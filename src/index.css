@@ -194,7 +194,7 @@
   }
 
   .option-item {
-    @apply flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-background cursor-pointer transition-all;
+    @apply flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-background cursor-pointer transition-all text-foreground;
   }
 
   .option-item:hover {
@@ -203,7 +203,7 @@
 
   .option-item[data-state="checked"],
   .option-item.selected {
-    @apply border-primary bg-primary/10;
+    @apply border-primary bg-primary/10 text-foreground;
   }
 
   /* Price display */
