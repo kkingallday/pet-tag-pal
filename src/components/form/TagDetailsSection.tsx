@@ -24,7 +24,7 @@ export function TagDetailsSection({ form }: TagDetailsSectionProps) {
       animalType: 'dog',
       shape: 'Round',
       size: 'small',
-      material: 'brass',
+      material: 'brass', // Default to brass, which supports Round shape
       frontLine1: '',
       backLine1: '',
     });

@@ -6,7 +6,7 @@ export interface TagDetails {
   animalTypeOther?: string;
   shape: string;
   size: 'small' | 'large';
-  material: 'brass' | 'stainless';
+  material: 'brass' | 'stainless' | 'pink_silver';
   frontLine1: string;
   frontLine2?: string;
   backLine1: string;
