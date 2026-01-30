@@ -60,15 +60,15 @@ interface TagCardProps {
 
 export function TagCard({ index, form, onRemove, canRemove }: TagCardProps) {
   const animalType = form.watch(`tags.${index}.animalType`);
-  const material = form.watch(`tags.${index}.material`);
-  const shape = form.watch(`tags.${index}.shape`);
+  const material = form.watch(`tags.${index}.material`) || 'brass';
+  const shape = form.watch(`tags.${index}.shape`) || 'Round';
 
   const availableShapes = getAvailableShapes(material);
   const availableSizes = getAvailableSizes(material, shape);
 
   // Auto-adjust shape when material changes
   useEffect(() => {
-    if (!availableShapes.includes(shape)) {
+    if (shape && !availableShapes.includes(shape)) {
       form.setValue(`tags.${index}.shape`, availableShapes[0]);
     }
   }, [material, availableShapes, shape, form, index]);
@@ -76,7 +76,7 @@ export function TagCard({ index, form, onRemove, canRemove }: TagCardProps) {
   // Auto-adjust size when shape/material changes
   useEffect(() => {
     const currentSize = form.getValues(`tags.${index}.size`);
-    if (!availableSizes.includes(currentSize)) {
+    if (currentSize && !availableSizes.includes(currentSize)) {
       form.setValue(`tags.${index}.size`, availableSizes[0] as 'small' | 'large');
     }
   }, [material, shape, availableSizes, form, index]);
