@@ -3,13 +3,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Trash2, Dog, Cat, HelpCircle } from 'lucide-react';
 import { OrderFormData } from '@/types/order';
 import {
@@ -20,6 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useEffect } from 'react';
+import { TagPreview } from './TagPreview';
 
 // Shape options (user picks first)
 const SHAPE_OPTIONS = ['Round', 'Bone', 'Heart'] as const;
@@ -65,7 +59,12 @@ interface TagCardProps {
 export function TagCard({ index, form, onRemove, canRemove }: TagCardProps) {
   const animalType = form.watch(`tags.${index}.animalType`);
   const shape = form.watch(`tags.${index}.shape`) || 'Round';
-  const material = form.watch(`tags.${index}.material`);
+  const material = form.watch(`tags.${index}.material`) || 'brass';
+  const size = form.watch(`tags.${index}.size`) || 'small';
+  const petName = form.watch(`tags.${index}.petName`) || '';
+  const petNameCase = form.watch(`tags.${index}.petNameCase`) || 'mixed';
+  const frontLine1 = form.watch(`tags.${index}.frontLine1`) || '';
+  const frontLine2 = form.watch(`tags.${index}.frontLine2`) || '';
 
   const availableMaterials = getAvailableMaterials(shape);
   const availableSizes = getAvailableSizes(shape);
@@ -85,6 +84,7 @@ export function TagCard({ index, form, onRemove, canRemove }: TagCardProps) {
       form.setValue(`tags.${index}.size`, availableSizes[0] as 'small' | 'large');
     }
   }, [shape, availableSizes, form, index]);
+
   return (
     <div className="tag-card animate-slide-in">
       <div className="flex items-center justify-between mb-4">
@@ -102,6 +102,19 @@ export function TagCard({ index, form, onRemove, canRemove }: TagCardProps) {
             <Trash2 className="w-4 h-4" />
           </Button>
         )}
+      </div>
+
+      {/* Live Tag Preview */}
+      <div className="flex justify-center py-4 mb-4 bg-muted/30 rounded-lg border border-border">
+        <TagPreview
+          shape={shape}
+          material={material}
+          size={size}
+          petName={petName}
+          petNameCase={petNameCase}
+          frontLine1={frontLine1}
+          frontLine2={frontLine2}
+        />
       </div>
 
       <div className="space-y-4">
