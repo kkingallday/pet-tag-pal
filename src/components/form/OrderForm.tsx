@@ -23,7 +23,7 @@ const tagSchema = z.object({
   animalTypeOther: z.string().optional(),
   shape: z.string().min(1, 'Shape is required'),
   size: z.enum(['small', 'large']),
-  material: z.enum(['brass', 'stainless']),
+  material: z.enum(['brass', 'stainless', 'pink_silver']),
   frontLine1: z.string().min(1, 'Front line 1 is required'),
   frontLine2: z.string().optional(),
   backLine1: z.string().min(1, 'Back line 1 is required'),

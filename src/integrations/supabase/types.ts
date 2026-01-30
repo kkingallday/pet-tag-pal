@@ -180,7 +180,7 @@ export type Database = {
       order_status: "pending" | "in_progress" | "completed" | "cancelled"
       payment_method: "cash" | "card" | "other"
       pet_name_case: "uppercase" | "mixed"
-      tag_material: "brass" | "stainless"
+      tag_material: "brass" | "stainless" | "pink_silver"
       tag_size: "small" | "large"
     }
     CompositeTypes: {
@@ -315,7 +315,7 @@ export const Constants = {
       order_status: ["pending", "in_progress", "completed", "cancelled"],
       payment_method: ["cash", "card", "other"],
       pet_name_case: ["uppercase", "mixed"],
-      tag_material: ["brass", "stainless"],
+      tag_material: ["brass", "stainless", "pink_silver"],
       tag_size: ["small", "large"],
     },
   },
