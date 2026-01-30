@@ -13,6 +13,7 @@ import { Send, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { submitOrder } from '@/services/orderService';
 
 const tagSchema = z.object({
   id: z.string(),
@@ -63,11 +64,7 @@ const orderFormSchema = z.object({
   signatureDate: z.date(),
 });
 
-interface OrderFormProps {
-  onSubmit?: (data: OrderFormData) => Promise<void>;
-}
-
-export function OrderForm({ onSubmit }: OrderFormProps) {
+export function OrderForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -108,26 +105,21 @@ export function OrderForm({ onSubmit }: OrderFormProps) {
   const handleSubmit = async (data: OrderFormData) => {
     setIsSubmitting(true);
     try {
-      if (onSubmit) {
-        await onSubmit(data);
-      } else {
-        // For now, store in localStorage until backend is set up
-        const orders = JSON.parse(localStorage.getItem('pet_tag_orders') || '[]');
-        const newOrder = {
-          ...data,
-          id: `ORD-${Date.now()}`,
-          createdAt: new Date().toISOString(),
-          status: 'pending',
-        };
-        orders.push(newOrder);
-        localStorage.setItem('pet_tag_orders', JSON.stringify(orders));
-        
+      const result = await submitOrder(data);
+      
+      if (result.success && result.orderId) {
         toast({
           title: 'Order Submitted Successfully!',
-          description: `Order ID: ${newOrder.id}`,
+          description: `Order Number: ${result.orderNumber}`,
         });
         
-        navigate(`/confirmation/${newOrder.id}`);
+        navigate(`/confirmation/${result.orderId}`);
+      } else {
+        toast({
+          title: 'Error',
+          description: result.error || 'Failed to submit order. Please try again.',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       toast({

@@ -5,18 +5,39 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { CheckCircle2, Home, Shield, Printer } from 'lucide-react';
-import { Order } from '@/types/order';
+import { CheckCircle2, Home, Shield, Printer, Loader2 } from 'lucide-react';
+import { fetchOrderById, OrderWithTags } from '@/services/orderService';
 
 export default function Confirmation() {
   const { orderId } = useParams<{ orderId: string }>();
-  const [order, setOrder] = useState<Order | null>(null);
+  const [order, setOrder] = useState<OrderWithTags | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const orders = JSON.parse(localStorage.getItem('pet_tag_orders') || '[]');
-    const found = orders.find((o: Order) => o.id === orderId);
-    setOrder(found || null);
+    async function loadOrder() {
+      if (!orderId) {
+        setLoading(false);
+        return;
+      }
+      
+      const orderData = await fetchOrderById(orderId);
+      setOrder(orderData);
+      setLoading(false);
+    }
+    
+    loadOrder();
   }, [orderId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Loading order...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!order) {
     return (
@@ -53,11 +74,11 @@ export default function Confirmation() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Order ID</p>
-                <p className="text-2xl font-bold text-primary">{order.id}</p>
+                <p className="text-sm text-muted-foreground">Order Number</p>
+                <p className="text-2xl font-bold text-primary">{order.order_number}</p>
               </div>
-              <Badge variant="secondary" className="text-sm">
-                {order.status}
+              <Badge variant="secondary" className="text-sm capitalize">
+                {order.status.replace('_', ' ')}
               </Badge>
             </div>
           </CardContent>
@@ -71,11 +92,11 @@ export default function Confirmation() {
           <CardContent className="space-y-2">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Name</span>
-              <span className="font-medium">{order.customerName}</span>
+              <span className="font-medium">{order.customer_name}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Phone</span>
-              <span className="font-medium">{order.phoneNumber}</span>
+              <span className="font-medium">{order.phone_number}</span>
             </div>
             {order.email && (
               <div className="flex justify-between">
@@ -85,7 +106,7 @@ export default function Confirmation() {
             )}
             <div className="flex justify-between">
               <span className="text-muted-foreground">Preferred Contact</span>
-              <span className="font-medium capitalize">{order.preferredContact}</span>
+              <span className="font-medium capitalize">{order.preferred_contact}</span>
             </div>
           </CardContent>
         </Card>
@@ -96,23 +117,23 @@ export default function Confirmation() {
             <CardTitle className="text-lg">Tags Ordered ({order.tags.length})</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {order.tags.map((tag, index) => (
+            {order.tags.map((tag) => (
               <div key={tag.id} className="p-4 rounded-lg bg-muted/50 border border-border">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="font-bold text-primary">Tag #{index + 1}</span>
+                  <span className="font-bold text-primary">Tag #{tag.tag_number}</span>
                   <Badge variant="outline">{tag.shape}</Badge>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
                     <span className="text-muted-foreground">Pet Name:</span>
                     <span className="ml-2 font-medium">
-                      {tag.petNameCase === 'uppercase' ? tag.petName.toUpperCase() : tag.petName}
+                      {tag.pet_name_case === 'uppercase' ? tag.pet_name.toUpperCase() : tag.pet_name}
                     </span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Animal:</span>
                     <span className="ml-2 font-medium capitalize">
-                      {tag.animalType === 'other' ? tag.animalTypeOther : tag.animalType}
+                      {tag.animal_type === 'other' ? tag.animal_type_other : tag.animal_type}
                     </span>
                   </div>
                   <div>
@@ -128,8 +149,8 @@ export default function Confirmation() {
                 </div>
                 <Separator className="my-3" />
                 <div className="text-sm space-y-1">
-                  <p><span className="text-muted-foreground">Front:</span> {tag.frontLine1}{tag.frontLine2 && ` / ${tag.frontLine2}`}</p>
-                  <p><span className="text-muted-foreground">Back:</span> {tag.backLine1}{tag.backLine2 && ` / ${tag.backLine2}`}{tag.backLine3 && ` / ${tag.backLine3}`}</p>
+                  <p><span className="text-muted-foreground">Front:</span> {tag.front_line_1}{tag.front_line_2 && ` / ${tag.front_line_2}`}</p>
+                  <p><span className="text-muted-foreground">Back:</span> {tag.back_line_1}{tag.back_line_2 && ` / ${tag.back_line_2}`}{tag.back_line_3 && ` / ${tag.back_line_3}`}</p>
                 </div>
               </div>
             ))}
@@ -144,11 +165,11 @@ export default function Confirmation() {
           <CardContent className="space-y-2">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Font Choice</span>
-              <span className="font-bold text-xl">Font {order.fontChoice}</span>
+              <span className="font-bold text-xl">Font {order.font_choice}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Custom Image</span>
-              <span className="font-medium">{order.addImage ? 'Yes (+$10)' : 'No'}</span>
+              <span className="font-medium">{order.add_image ? 'Yes (+$10)' : 'No'}</span>
             </div>
             <div className="flex justify-between items-start">
               <span className="text-muted-foreground">Icons</span>
@@ -164,7 +185,7 @@ export default function Confirmation() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Icon Placement</span>
-              <span className="font-medium capitalize">{order.iconPlacement.replace('_', ' ')}</span>
+              <span className="font-medium capitalize">{order.icon_placement.replace('_', ' ')}</span>
             </div>
             {order.notes && (
               <div className="pt-2">
@@ -183,34 +204,34 @@ export default function Confirmation() {
           <CardContent className="space-y-2">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Base Tag Price</span>
-              <span className="font-medium">${order.baseTagPrice.toFixed(2)}</span>
+              <span className="font-medium">${Number(order.base_tag_price).toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Add-ons</span>
-              <span className="font-medium">${order.addOnsTotal.toFixed(2)}</span>
+              <span className="font-medium">${Number(order.add_ons_total).toFixed(2)}</span>
             </div>
             <Separator className="my-2" />
             <div className="flex justify-between text-lg">
               <span className="font-bold">Total</span>
-              <span className="font-bold text-primary">${order.orderTotal.toFixed(2)}</span>
+              <span className="font-bold text-primary">${Number(order.order_total).toFixed(2)}</span>
             </div>
             <div className="flex justify-between pt-2">
               <span className="text-muted-foreground">Payment Method</span>
               <span className="font-medium capitalize">
-                {order.paymentMethod === 'other' ? order.paymentMethodOther : order.paymentMethod}
+                {order.payment_method === 'other' ? order.payment_method_other : order.payment_method}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Date Ordered</span>
               <span className="font-medium">
-                {new Date(order.dateOrdered).toLocaleDateString()}
+                {new Date(order.date_ordered).toLocaleDateString()}
               </span>
             </div>
-            {order.readyBy && (
+            {order.ready_by && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Ready By</span>
                 <span className="font-medium">
-                  {new Date(order.readyBy).toLocaleDateString()}
+                  {new Date(order.ready_by).toLocaleDateString()}
                 </span>
               </div>
             )}
@@ -233,7 +254,7 @@ export default function Confirmation() {
               <p className="text-sm text-muted-foreground mb-2">Signed by</p>
               <p className="signature-field text-2xl text-primary">{order.signature}</p>
               <p className="text-sm text-muted-foreground mt-2">
-                {new Date(order.signatureDate).toLocaleDateString()}
+                {new Date(order.signature_date).toLocaleDateString()}
               </p>
             </div>
           </CardContent>
