@@ -7,8 +7,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { OrderFormData, FONT_OPTIONS } from '@/types/order';
-import { Info, Upload } from 'lucide-react';
+import { Info, Upload, ImageIcon, Mail } from 'lucide-react';
 import fontSamplesImage from '@/assets/font-samples.png';
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import {
   FormField,
   FormItem,
@@ -26,6 +29,68 @@ export function FontIconsSection({ form }: FontIconsSectionProps) {
   const addImage = form.watch('addImage');
   const otherIcon = form.watch('icons.other');
   const shape = form.watch('tags.0.shape');
+  const [uploading, setUploading] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please upload an image file (JPG, PNG, etc.)',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please upload an image smaller than 5MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `custom-images/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('tag-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('tag-images')
+        .getPublicUrl(filePath);
+
+      setUploadedImageUrl(publicUrl);
+      form.setValue('imageFile', file);
+      
+      toast({
+        title: 'Image uploaded!',
+        description: 'Your custom image has been uploaded successfully.',
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: 'Upload failed',
+        description: 'Failed to upload image. Please try again or email it instead.',
+        variant: 'destructive',
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <FormSection number={4} title="Font & Icons" variant="font">
@@ -101,16 +166,61 @@ export function FontIconsSection({ form }: FontIconsSectionProps) {
                   </AlertDescription>
                 </Alert>
               )}
-              <Alert>
-                <Upload className="h-4 w-4" />
-                <AlertDescription>
-                  <strong>Email your image to:</strong> manascraftny@gmail.com
-                  <br />
-                  <span className="text-xs text-muted-foreground">
-                    Include your order reference in the subject line.
-                  </span>
-                </AlertDescription>
-              </Alert>
+              
+              {/* Upload Option */}
+              <div className="grid gap-3">
+                <Label className="text-sm font-medium">Upload your image:</Label>
+                <div className="flex items-center gap-3">
+                  <label className="flex-1 cursor-pointer">
+                    <div className={`flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed rounded-lg transition-colors ${uploading ? 'bg-muted cursor-wait' : 'hover:bg-muted/50 hover:border-primary'}`}>
+                      {uploading ? (
+                        <span className="text-sm text-muted-foreground">Uploading...</span>
+                      ) : uploadedImageUrl ? (
+                        <div className="flex items-center gap-2 text-green-600">
+                          <ImageIcon className="h-4 w-4" />
+                          <span className="text-sm font-medium">Image uploaded ✓</span>
+                        </div>
+                      ) : (
+                        <>
+                          <Upload className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Click to upload image</span>
+                        </>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="sr-only"
+                    />
+                  </label>
+                </div>
+                
+                {uploadedImageUrl && (
+                  <div className="mt-2">
+                    <img 
+                      src={uploadedImageUrl} 
+                      alt="Uploaded preview" 
+                      className="w-20 h-20 object-cover rounded-lg border"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Email Option */}
+              <div className="pt-2 border-t">
+                <Alert>
+                  <Mail className="h-4 w-4" />
+                  <AlertDescription>
+                    <strong>Or email your image to:</strong> petsaddress@hotmail.com
+                    <br />
+                    <span className="text-xs text-muted-foreground">
+                      Include your order reference in the subject line.
+                    </span>
+                  </AlertDescription>
+                </Alert>
+              </div>
             </div>
           )}
         </div>
